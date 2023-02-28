@@ -3,25 +3,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from flask import Flask, request, render_template
 
-# Define the text dataset
-reviews = pd.DataFrame({
-    'review': [
-        'This movie is an absolute joy to watch. The performances are outstanding, and the plot keeps you engaged throughout. I highly recommend it.',
-        'I loved this book. The characters were well-developed and the plot was captivating. I couldn\'t put it down!',
-        'This restaurant is fantastic. The food is delicious and the service is top-notch. I will definitely be coming back.',
-        'I was extremely disappointed in this movie. The plot was confusing and the acting was subpar. I do not recommend it.',
-        'I found this book to be boring and poorly written. The characters were one-dimensional and the plot was predictable.',
-        'I had a terrible experience at this restaurant. The food was cold and the service was slow. I will not be returning.'
-    ],
-    'sentiment': [
-        'positive',
-        'positive',
-        'positive',
-        'negative',
-        'negative',
-        'negative'
-    ]
-})
+# Define your text dataset here, in the format required for the machine learning model
 
 # Preprocess the text dataset
 vectorizer = CountVectorizer(lowercase=True, stop_words='english')
