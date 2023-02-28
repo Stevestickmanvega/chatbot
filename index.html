@@ -1,0 +1,57 @@
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from flask import Flask, request, render_template
+
+# Define the text dataset
+reviews = pd.DataFrame({
+    'review': [
+        'This movie is an absolute joy to watch. The performances are outstanding, and the plot keeps you engaged throughout. I highly recommend it.',
+        'I loved this book. The characters were well-developed and the plot was captivating. I couldn\'t put it down!',
+        'This restaurant is fantastic. The food is delicious and the service is top-notch. I will definitely be coming back.',
+        'I was extremely disappointed in this movie. The plot was confusing and the acting was subpar. I do not recommend it.',
+        'I found this book to be boring and poorly written. The characters were one-dimensional and the plot was predictable.',
+        'I had a terrible experience at this restaurant. The food was cold and the service was slow. I will not be returning.'
+    ],
+    'sentiment': [
+        'positive',
+        'positive',
+        'positive',
+        'negative',
+        'negative',
+        'negative'
+    ]
+})
+
+# Preprocess the text dataset
+vectorizer = CountVectorizer(lowercase=True, stop_words='english')
+X = vectorizer.fit_transform(reviews['review'])
+y = reviews['sentiment']
+
+# Train a Naive Bayes model on the preprocessed data
+model = MultinomialNB()
+model.fit(X, y)
+
+# Create a Flask app
+app = Flask(__name__)
+
+# Define the homepage route
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# Define the route for handling user input
+@app.route('/predict', methods=['POST'])
+def predict():
+    # Get the user input from the HTML form
+    user_input = request.form['user_input']
+
+    # Use the machine learning model to predict the sentiment of the user input
+    user_input_vector = vectorizer.transform([user_input])
+    prediction = model.predict(user_input_vector)
+
+    # Return the predicted sentiment to the HTML template
+    return render_template('result.html', prediction=prediction[0])
+
+if __name__ == '__main__':
+    app.run(debug=True)
